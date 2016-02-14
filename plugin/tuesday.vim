@@ -25,7 +25,7 @@ fu! s:find_unique_session_name(savedir, projectname)
 endf
 
 fu! s:make_project_name()
-  return fnamemodify(expand(getcwd()), ':t')
+  return fnamemodify(getcwd(), ':t')
 endf
 
 fu! s:savedir()
