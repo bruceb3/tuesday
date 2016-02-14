@@ -40,12 +40,33 @@ fu! s:setup_save_dir()
   return l:savedir
 endf
 
-fu! s:save()
+" called by s:save to move the index to the new bottom.
+" side effect; after saving s:current_state[projectname] is defined.
+fu! s:update_index(projectname)
+  let sessions = s:ordered_sessions()
+  let s:current_state[a:projectname] = len(sessions) - 1
+endf
+
+fu! s:get_index(projectname)
+  if has_key(s:current_state, projectname)
+    return s:current_state[projectname]
+  else
+    return (s:current_state[projectname] = -1)
+  endif
+endf
+
+fu! s:increment_index(projectname)
+  if has_key(s:current_state, projectname)
+    let s:current_state[projectname] = s:current_state[projectname] + 1
+  endif
+endf
+
+fu! TuesdaySave()
   let savedir = s:setup_save_dir()
   let projectname = s:make_project_name()
   let session_filename = s:find_unique_session_name(savedir, projectname)
   exe "mksession! " . l:session_filename
-  s:current_state[projectname] = -1 " reset position.
+  call s:update_index(projectname)
 endf
 
 fu! s:reload_sessions()
@@ -87,36 +108,72 @@ fu! s:ordered_sessions()
   return sessions
 endf
 
-fu! s:back()
+fu! s:go_back_one_session(projectname)
+  let sessions = s:ordered_sessions()
+  if !has_key(s:current_state, a:projectname)
+    let s:current_state[a:projectname] = len(sessions) - 1
+  end
+  if len(sessions) == 0 " no sessions found.
+    echo "no sessions found"
+    return -1
+  endif
+  if s:current_state[a:projectname] == 0
+    echo "At the top of the list"
+    return -1
+  endif
+  let s:current_state[a:projectname] = s:current_state[a:projectname] - 1
+  let restore_session = sessions[s:current_state[a:projectname]]
+  return restore_session
+endf
+
+fu! s:go_forward_one_session(projectname)
+  let sessions = s:ordered_sessions()
+  if !has_key(s:current_state, a:projectname)
+    let s:current_state[a:projectname] = len(sessions) - 1
+  end
+  if len(sessions) == 0 " no sessions found.
+    echo "no sessions found"
+    return -1
+  endif
+  if s:current_state[a:projectname] == len(sessions) - 1
+    echo "At the bottom of the list"
+    return -1
+  endif
+  let s:current_state[a:projectname] = s:current_state[a:projectname] + 1
+  let restore_session = sessions[s:current_state[a:projectname]]
+  return restore_session
+endf
+
+fu! TuesdayBack()
   let projectname = s:make_project_name()
   if !s:check_for_savedir()
     return 0
   endif
-  sessions = s:ordered_sessions()
-  if len(sessions) == 0
+  let restore_session = s:go_back_one_session(projectname)
+  if restore_session != -1
+    exe "so " . restore_session
+  endif
+endf
+
+fu! TuesdayForward()
+  let projectname = s:make_project_name()
+  if !s:check_for_savedir()
     return 0
   endif
-  if s:current_state[projectname] == -1
-    " never gone back to previous session
-    let s:current_state[projectname] == len(sessions)
-    restore_session = sessions[-1]
-  else
-    " at the top of the list of sessions; reset to the bottom
-    " TODO beep or something to let the user know.
-    if s:current_state[projectname] == 1
-      return 0
-    endif
-    let s:current_state[projectname] = s:current_state[projectname] - 1
-    restore_session = sessions[s:current_state[projectname]]
+  let restore_session = s:go_forward_one_session(projectname)
+  if restore_session != -1
+    exe "so " . restore_session
   endif
-  exe "so " . last_session
 endf
 
-fu! s:forward()
-  echo "foo"
+fu! TuesdayReload()
+  let projectname = s:make_project_name()
+  if has_key(s:current_state, projectname)
+    remove(s:current_state, projectname)
+  endif
 endf
 
-nmap ,s :call <SID>save()<cr>
-nmap ,f :call <SID>forward()<cr>
-nmap ,b :call <SID>back()<cr>
+nmap <silent> ,s :call TuesdaySave()<cr>
+nmap <silent> ,f :call TuesdayForward()<cr>
+nmap <silent> ,b :call TuesdayBack()<cr>
 
