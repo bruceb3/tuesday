@@ -26,28 +26,6 @@ The date is stored in the file name but is not used by Tuesday. Instead the modi
 ,b to move back a session
 ,f to move forward a session
 
-### Using auto commands to automatically save sessions
-
-As a suggestion, the following code in your ~/.vimrc will cause a session to be save whenever a file is opened.
-
-```vim
-augroup tuesday
-  au!
-  au BufWritePre,BufRead * call TuesdaySave()
-end
-```
-
-The VimLeave event can be added to the list of events if you it's desirable to save a session when exiting vim.
-
-e.g.
-```vim
-augroup tuesday
-  au!
-  au BufWritePre,BufRead * call TuesdaySave()
-  au VimLeave * if !v:dying | call TuesdaySave() | endif
-end
-```
-
 # Customisation
 
 ## sessionoptions
