@@ -61,15 +61,6 @@ fu! s:increment_index(projectname)
   endif
 endf
 
-fu! s:Save()
-  let savedir = s:setup_save_dir()
-  let projectname = s:make_project_name()
-  let session_filename = s:find_unique_session_name(savedir, projectname)
-  exe "mksession! " . l:session_filename
-  call s:update_index(projectname)
-  echo "Session saved"
-endf
-
 fu! s:reload_sessions()
   let sessions = s:make_list_of_sessions_for_this_project()
 endf
@@ -146,6 +137,16 @@ fu! s:go_forward_one_session(projectname)
   endif
   let restore_session = sessions[s:current_state[a:projectname]]
   return restore_session
+endf
+
+fu! s:Save()
+  let s:return_message = 'Saving session'
+  let savedir = s:setup_save_dir()
+  let projectname = s:make_project_name()
+  let session_filename = s:find_unique_session_name(savedir, projectname)
+  exe "mksession! " . l:session_filename
+  call s:update_index(projectname)
+  echo s:return_message
 endf
 
 fu! s:Back()
