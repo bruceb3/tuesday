@@ -67,6 +67,7 @@ fu! TuesdaySave()
   let session_filename = s:find_unique_session_name(savedir, projectname)
   exe "mksession! " . l:session_filename
   call s:update_index(projectname)
+  echo "Session saved"
 endf
 
 fu! s:reload_sessions()
@@ -153,6 +154,7 @@ fu! TuesdayBack()
   if restore_session != -1
     exe "so " . restore_session
   endif
+  echo "Back a session"
 endf
 
 fu! TuesdayForward()
@@ -164,6 +166,7 @@ fu! TuesdayForward()
   if restore_session != -1
     exe "so " . restore_session
   endif
+  echo "Forward a session"
 endf
 
 fu! TuesdayReload()
