@@ -22,9 +22,11 @@ The date is stored in the file name but is not used by Tuesday. Instead the modi
 
 ### Default key mappings
 
-,s to save a session
-,b to move back a session
-,f to move forward a session
+<spc>s to save a session
+<spc>b to move back a session
+<spc>f to move forward a session
+
+Currently the key mappings are hardcoded, which is something that needs to be changed in the future.
 
 # Customisation
 
