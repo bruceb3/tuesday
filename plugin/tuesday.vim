@@ -183,3 +183,4 @@ nmap <silent> <Char-040>s :call TuesdaySave()<cr>
 nmap <silent> <Char-040>f :call TuesdayForward()<cr>
 nmap <silent> <Char-040>b :call TuesdayBack()<cr>
 
+command! -nargs=0 TuesdayReload call TuesdayReload()
