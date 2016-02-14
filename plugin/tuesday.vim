@@ -6,6 +6,7 @@
 "
 
 let s:current_state = {}
+let s:return_message = ''
 
 fu! s:make_session_filename(dirname, suffix, count)
   return printf("%s/%s-%s-%d", a:dirname, a:suffix, strftime("%Y%m%d%H%M%S"), a:count)
@@ -103,39 +104,41 @@ endf
 fu! s:go_back_one_session(projectname)
   let sessions = s:ordered_sessions()
   if len(sessions) == 0 " no sessions found.
-    echo "no sessions found"
+    let s:return_message .= " No sessions found."
     return -1
   endif
   if !has_key(s:current_state, a:projectname)
     let s:current_state[a:projectname] = len(sessions) - 1
   else
     if s:current_state[a:projectname] == 0
-      echo "At the top of the list"
+      let s:return_message .= " At the top of the list."
       return -1
     else
       let s:current_state[a:projectname] = s:current_state[a:projectname] - 1
     endif
   endif
   let restore_session = sessions[s:current_state[a:projectname]]
+  let s:return_message .= printf(" At session %d of %d", s:current_state[a:projectname]+1, len(sessions))
   return restore_session
 endf
 
 fu! s:go_forward_one_session(projectname)
   let sessions = s:ordered_sessions()
   if len(sessions) == 0 " no sessions found.
-    echo "no sessions found"
+    let s:return_message .= " No sessions found."
     return -1
   endif
   if !has_key(s:current_state, a:projectname)
     let s:current_state[a:projectname] = len(sessions) - 1
   end
   if s:current_state[a:projectname] == len(sessions) - 1
-    echo "At the bottom of the list"
+    let s:return_message .= " At the bottom of the list."
     return -1
   else
     let s:current_state[a:projectname] = s:current_state[a:projectname] + 1
   endif
   let restore_session = sessions[s:current_state[a:projectname]]
+  let s:return_message .= printf(" At session %d of %d", s:current_state[a:projectname]+1, len(sessions))
   return restore_session
 endf
 
@@ -150,6 +153,7 @@ fu! s:Save()
 endf
 
 fu! s:Back()
+  let s:return_message = 'Back a session'
   let projectname = s:make_project_name()
   if !s:check_for_savedir()
     return 0
@@ -158,10 +162,11 @@ fu! s:Back()
   if restore_session != -1
     exe "so " . restore_session
   endif
-  echo "Back a session"
+  echo s:return_message
 endf
 
 fu! s:Forward()
+  let s:return_message = 'Forward a session'
   let projectname = s:make_project_name()
   if !s:check_for_savedir()
     return 0
@@ -170,7 +175,7 @@ fu! s:Forward()
   if restore_session != -1
     exe "so " . restore_session
   endif
-  echo "Forward a session"
+  echo s:return_message
 endf
 
 fu! s:Reload()
