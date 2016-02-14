@@ -37,6 +37,17 @@ augroup tuesday
 end
 ```
 
+The VimLeave event can be added to the list of events if you it's desirable to save a session when exiting vim.
+
+e.g.
+```vim
+augroup tuesday
+  au!
+  au BufWritePre,BufRead * call TuesdaySave()
+  au VimLeave * if !v:dying | call TuesdaySave() | endif
+end
+```
+
 # Customisation
 
 ## sessionoptions
