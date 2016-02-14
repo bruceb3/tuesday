@@ -61,7 +61,7 @@ fu! s:increment_index(projectname)
   endif
 endf
 
-fu! TuesdaySave()
+fu! s:Save()
   let savedir = s:setup_save_dir()
   let projectname = s:make_project_name()
   let session_filename = s:find_unique_session_name(savedir, projectname)
@@ -148,7 +148,7 @@ fu! s:go_forward_one_session(projectname)
   return restore_session
 endf
 
-fu! TuesdayBack()
+fu! s:Back()
   let projectname = s:make_project_name()
   if !s:check_for_savedir()
     return 0
@@ -160,7 +160,7 @@ fu! TuesdayBack()
   echo "Back a session"
 endf
 
-fu! TuesdayForward()
+fu! s:Forward()
   let projectname = s:make_project_name()
   if !s:check_for_savedir()
     return 0
@@ -172,15 +172,15 @@ fu! TuesdayForward()
   echo "Forward a session"
 endf
 
-fu! TuesdayReload()
+fu! s:Reload()
   let projectname = s:make_project_name()
   if has_key(s:current_state, projectname)
     remove(s:current_state, projectname)
   endif
 endf
 
-nmap <silent> <Char-040>s :call TuesdaySave()<cr>
-nmap <silent> <Char-040>f :call TuesdayForward()<cr>
-nmap <silent> <Char-040>b :call TuesdayBack()<cr>
+nmap <silent> <Char-040>s :call <SID>Save()<cr>
+nmap <silent> <Char-040>f :call <SID>Forward()<cr>
+nmap <silent> <Char-040>b :call <SID>Back()<cr>
 
-command! -nargs=0 TuesdayReload call TuesdayReload()
+command! -nargs=0 TuesdayReload call s:Reload()
