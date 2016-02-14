@@ -33,7 +33,7 @@ As a suggestion, the following code in your ~/.vimrc will cause a session to be 
 ```vim
 augroup tuesday
   au!
-  au BufWritePre,BufRead * :call TuesdaySave()
+  au BufWritePre,BufRead * call TuesdaySave()
 end
 ```
 
