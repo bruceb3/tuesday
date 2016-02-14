@@ -111,36 +111,39 @@ endf
 
 fu! s:go_back_one_session(projectname)
   let sessions = s:ordered_sessions()
-  if !has_key(s:current_state, a:projectname)
-    let s:current_state[a:projectname] = len(sessions) - 1
-  end
   if len(sessions) == 0 " no sessions found.
     echo "no sessions found"
     return -1
   endif
-  if s:current_state[a:projectname] == 0
-    echo "At the top of the list"
-    return -1
+  if !has_key(s:current_state, a:projectname)
+    let s:current_state[a:projectname] = len(sessions) - 1
+  else
+    if s:current_state[a:projectname] == 0
+      echo "At the top of the list"
+      return -1
+    else
+      let s:current_state[a:projectname] = s:current_state[a:projectname] - 1
+    endif
   endif
-  let s:current_state[a:projectname] = s:current_state[a:projectname] - 1
   let restore_session = sessions[s:current_state[a:projectname]]
   return restore_session
 endf
 
 fu! s:go_forward_one_session(projectname)
   let sessions = s:ordered_sessions()
-  if !has_key(s:current_state, a:projectname)
-    let s:current_state[a:projectname] = len(sessions) - 1
-  end
   if len(sessions) == 0 " no sessions found.
     echo "no sessions found"
     return -1
   endif
+  if !has_key(s:current_state, a:projectname)
+    let s:current_state[a:projectname] = len(sessions) - 1
+  end
   if s:current_state[a:projectname] == len(sessions) - 1
     echo "At the bottom of the list"
     return -1
+  else
+    let s:current_state[a:projectname] = s:current_state[a:projectname] + 1
   endif
-  let s:current_state[a:projectname] = s:current_state[a:projectname] + 1
   let restore_session = sessions[s:current_state[a:projectname]]
   return restore_session
 endf
@@ -176,7 +179,7 @@ fu! TuesdayReload()
   endif
 endf
 
-nmap <silent> ,s :call TuesdaySave()<cr>
-nmap <silent> ,f :call TuesdayForward()<cr>
-nmap <silent> ,b :call TuesdayBack()<cr>
+nmap <silent> <Char-040>s :call TuesdaySave()<cr>
+nmap <silent> <Char-040>f :call TuesdayForward()<cr>
+nmap <silent> <Char-040>b :call TuesdayBack()<cr>
 
